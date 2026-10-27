@@ -7,16 +7,27 @@ class Balance:
 
     _instance = None
 
+    def __new__(cls):
+        if cls._instance is None:
+            cls._instance = super(Balance, cls).__new__(cls)
+            cls._instance.net_balance = 0.0
+
+        return cls._instance
+
     def __init__(self):
         """Initialize the balance. Prevent direct instantiation."""
-        if Balance._instance is not None:
-            raise Exception("Balance tracker instance already exists")
-        
-        else:
-            self.net_balance = 0.0
-            Balance._instance = self
+        if hasattr(self, '_initialized') and self._initialized:
+            return
 
-        return Balance._instance
+        self._initialized = True
+
+    @classmethod
+    def get_instance(cls):
+        """Get the singleton instance of Balance."""
+        if cls._instance is None:
+            cls._instance = Balance()
+
+        return cls._instance
 
     def reset(self):
         """Reset the net balance to zero."""
