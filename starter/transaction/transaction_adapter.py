@@ -8,5 +8,7 @@ class TransactionAdapter:
         self.external_transaction = external_transaction
 
     def to_transaction(self):
-        """Convert an external transaction to a standard Transaction."""
-        pass
+        amount = self.external_transaction.amount
+        category = TransactionCategory.INCOME # always income
+
+        return Transaction(amount, category)
