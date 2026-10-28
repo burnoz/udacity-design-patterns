@@ -1,6 +1,7 @@
 # balance.py
 
 from transaction.transaction_category import TransactionCategory
+from balance.transaction_strategy import IncomeStrategy, ExpenseStrategy
 
 class Balance:
     """Singleton to track the balance."""
@@ -12,7 +13,11 @@ class Balance:
             cls._instance = super(Balance, cls).__new__(cls)
             cls._instance.net_balance = 0.0
             cls._instance._observers = []
-            
+            cls._instance._transaction_strategies = {
+                TransactionCategory.INCOME: IncomeStrategy(),
+                TransactionCategory.EXPENSE: ExpenseStrategy(),
+            }
+        
         return cls._instance
 
     def __init__(self):
@@ -64,15 +69,12 @@ class Balance:
         Args:
             transaction (Transaction): The transaction to apply.
         """
-        if transaction.category == TransactionCategory.INCOME:
-            self.net_balance += transaction.amount
-        
-        elif transaction.category == TransactionCategory.EXPENSE:
-            self.net_balance -= transaction.amount
-        
-        else:
+        strategy = self._transaction_strategies.get(transaction.category)
+
+        if strategy is None:
             raise ValueError("Invalid transaction category")
 
+        strategy.apply(self, transaction.amount)
         self.notify_observers(transaction)
 
     def get_balance(self):
