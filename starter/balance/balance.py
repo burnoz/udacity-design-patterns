@@ -11,7 +11,8 @@ class Balance:
         if cls._instance is None:
             cls._instance = super(Balance, cls).__new__(cls)
             cls._instance.net_balance = 0.0
-
+            cls._instance._observers = []
+            
         return cls._instance
 
     def __init__(self):
@@ -25,9 +26,24 @@ class Balance:
     def get_instance(cls):
         """Get the singleton instance of Balance."""
         if cls._instance is None:
-            cls._instance = Balance()
+            cls._instance = cls()
 
         return cls._instance
+
+    def register_observer(self, observer):
+        """Register an observer"""
+        if observer not in self._observers:
+            self._observers.append(observer)
+
+    def remove_observer(self, observer):
+        """Remove an observer"""
+        if observer in self._observers:
+            self._observers.remove(observer)
+
+    def notify_observers(self, transaction):
+        """Notify registered observers about balance updates"""
+        for observer in self._observers:
+            observer.update(self, transaction)
 
     def reset(self):
         """Reset the net balance to zero."""
@@ -48,7 +64,16 @@ class Balance:
         Args:
             transaction (Transaction): The transaction to apply.
         """
-        pass
+        if transaction.category == TransactionCategory.INCOME:
+            self.net_balance += transaction.amount
+        
+        elif transaction.category == TransactionCategory.EXPENSE:
+            self.net_balance -= transaction.amount
+        
+        else:
+            raise ValueError("Invalid transaction category")
+
+        self.notify_observers(transaction)
 
     def get_balance(self):
         """Get the current net balance."""
@@ -57,4 +82,4 @@ class Balance:
     def summary(self):
         """Return a summary string of the net balance."""
         return f"Current Balance: ${self.net_balance:.2f}"
-    
+
