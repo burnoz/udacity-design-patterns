@@ -15,4 +15,5 @@ class Transaction:
     def __eq__(self, other):
         if not isinstance(other, Transaction):
             return False
+        
         return self.amount == other.amount and self.category == other.category
