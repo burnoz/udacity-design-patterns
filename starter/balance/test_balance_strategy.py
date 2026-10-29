@@ -20,8 +20,18 @@ class TestBalanceStrategy(unittest.TestCase):
         self.assertEqual(self.balance.get_balance(), -80)
 
     def test_balance_uses_strategy_lookup_for_category(self):
-        self.balance.apply_transaction(type("T", (), {"category": TransactionCategory.INCOME, "amount": 150})())
-        self.balance.apply_transaction(type("T", (), {"category": TransactionCategory.EXPENSE, "amount": 40})())
+        income = type(
+            "T",
+            (),
+            {"category": TransactionCategory.INCOME, "amount": 150},
+        )()
+        expense = type(
+            "T",
+            (),
+            {"category": TransactionCategory.EXPENSE, "amount": 40},
+        )()
+        self.balance.apply_transaction(income)
+        self.balance.apply_transaction(expense)
         self.assertEqual(self.balance.get_balance(), 110)
 
 

@@ -3,6 +3,7 @@
 from transaction.transaction_category import TransactionCategory
 from balance.transaction_strategy import IncomeStrategy, ExpenseStrategy
 
+
 class Balance:
     """Singleton to track the balance."""
 
@@ -17,7 +18,7 @@ class Balance:
                 TransactionCategory.INCOME: IncomeStrategy(),
                 TransactionCategory.EXPENSE: ExpenseStrategy(),
             }
-        
+
         return cls._instance
 
     def __init__(self):
@@ -84,4 +85,3 @@ class Balance:
     def summary(self):
         """Return a summary string of the net balance."""
         return f"Current Balance: ${self.net_balance:.2f}"
-

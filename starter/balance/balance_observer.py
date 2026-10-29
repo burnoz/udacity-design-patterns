@@ -1,5 +1,6 @@
 # balance_observer.py
 
+
 class IBalanceObserver:
     def update(self, balance, transaction):
         """Handle balance updates."""
@@ -24,6 +25,6 @@ class LowBalanceAlertObserver(IBalanceObserver):
         if current < self.threshold:
             self.alert_triggered = True
             print(f"Alert: balance below threshold ({current})")
-        
+
         else:
             self.alert_triggered = False
